@@ -1,17 +1,35 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
+<!--    <style name="Base.Theme.ShopEasy" parent="Theme.Material3.DayNight.NoActionBar">-->
+<!--        &lt;!&ndash; Prevent fullscreen to avoid overlapping status bar &ndash;&gt;-->
+<!--        <item name="android:windowFullscreen">false</item>-->
+<!--        <item name="android:windowDrawsSystemBarBackgrounds">true</item>-->
+<!--&lt;!&ndash;        <item name="android:statusBarColor">@android:color/transparent</item>&ndash;&gt;-->
+<!--        <item name="android:windowTranslucentStatus">false</item>-->
+<!--        <item name="android:statusBarColor">@color/bg_color</item>-->
+<!--        &lt;!&ndash; Set custom colors &ndash;&gt;-->
+<!--        <item name="colorPrimary">@color/my_light_primary</item>-->
+<!--&lt;!&ndash;        <item name="colorOnPrimary">@color/my_light_on_primary</item>&ndash;&gt;-->
+<!--&lt;!&ndash;        <item name="colorSecondary">@color/my_light_secondary</item>&ndash;&gt;-->
+<!--&lt;!&ndash;        <item name="colorOnSecondary">@color/my_light_on_secondary</item>&ndash;&gt;-->
+<!--    </style>-->
+
+<!--    <style name="Theme.ShopEasy" parent="Base.Theme.ShopEasy" />-->
+<!--&lt;!&ndash;        <item name="android:windowFullscreen">false</item>&ndash;&gt;-->
+<!--        <item name="android:windowDrawsSystemBarBackgrounds">true</item>-->
+<!--&lt;!&ndash;        <item name="android:statusBarColor">@android:color/transparent</item>&ndash;&gt;-->
+<!--        <item name="android:windowTranslucentStatus">false</item>-->
+<!--        <item name="android:statusBarColor">@color/bg_color</item>-->
+<!--    </style>-->
+
+
     <style name="Base.Theme.ShopEasy" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Prevent fullscreen to avoid overlapping status bar -->
         <item name="android:windowFullscreen">false</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:windowTranslucentStatus">false</item>
-        <!-- Set custom colors -->
+        <item name="android:statusBarColor">@color/bg_color</item>
         <item name="colorPrimary">@color/my_light_primary</item>
-        <item name="colorOnPrimary">@color/my_light_on_primary</item>
-        <item name="colorSecondary">@color/my_light_secondary</item>
-        <item name="colorOnSecondary">@color/my_light_on_secondary</item>
     </style>
 
     <style name="Theme.ShopEasy" parent="Base.Theme.ShopEasy" />
+
 </resources>

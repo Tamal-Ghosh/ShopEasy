@@ -1,11 +1,14 @@
 package com.example.shopeasy.ui.profile
 
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import com.example.shopeasy.databinding.FragmentAccountBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.example.shopeasy.LoginActivity
@@ -27,6 +30,11 @@ class AccountFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // Fix for transparent status bar overlap + correct icon color
+        val window = requireActivity().window
+        val isDarkTheme = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
+        WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = false
 
         firebaseAuth = FirebaseAuth.getInstance()
         val user = firebaseAuth.currentUser

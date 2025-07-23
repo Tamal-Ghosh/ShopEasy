@@ -1,10 +1,12 @@
 package com.example.shopeasy.ui.home
 
+import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -35,6 +37,12 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Adjust status bar icon color based on light/dark theme
+        val window = requireActivity().window
+        val isDarkTheme = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
+        WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = false
+
+        // RecyclerView setup
         productAdapter = ProductAdapter(emptyList()) { clickedProduct ->
             val detailFragment = ProductDetailFragment.newInstance(clickedProduct)
             parentFragmentManager.beginTransaction()
@@ -42,33 +50,18 @@ class HomeFragment : Fragment() {
                 .addToBackStack(null)
                 .commit()
         }
-        binding.recyclerView.adapter = productAdapter
-        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        // Button to add 10 sample products
-//        binding.addSampleProductsButton.setOnClickListener {
-//            val sampleProducts = List(10) { i ->
-//                Product(
-//                    id = i + 1,
-//                    name = "Product ${i + 1}",
-//                    price = (100..500).random().toDouble(),
-//                    description = "Description for product ${i + 1}",
-//                    imageUrl = ""
-//                )
-//            }
-//            sampleProducts.forEach { product ->
-//                viewLifecycleOwner.lifecycleScope.launch {
-//                    productViewModel.addProduct(product) { }
-//                }
-//            }
-//        }
+        binding.recyclerView.apply {
+            adapter = productAdapter
+            layoutManager = LinearLayoutManager(requireContext())
+        }
 
+        // Observe products from ViewModel
         productViewModel.productsLive.observe(viewLifecycleOwner) { productEntities ->
             val products = productEntities.map {
                 Log.d("HomeFragmentId", "Product ID: ${it.id} - Name: ${it.name}")
                 Product(
-
-                    id = it.id.toInt()?: 0,
+                    id = it.id.toInt() ?: 0,
                     name = it.name,
                     price = it.price,
                     description = it.description,
@@ -78,6 +71,7 @@ class HomeFragment : Fragment() {
             productAdapter.submitList(products)
         }
 
+        // Load data from Firestore
         viewLifecycleOwner.lifecycleScope.launch {
             productViewModel.refreshProducts()
         }
