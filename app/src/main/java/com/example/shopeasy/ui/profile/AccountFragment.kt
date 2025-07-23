@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import com.example.shopeasy.databinding.FragmentAccountBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.example.shopeasy.LoginActivity
+import com.google.firebase.firestore.FirebaseFirestore
 
 class AccountFragment : Fragment() {
 
@@ -28,11 +29,39 @@ class AccountFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         firebaseAuth = FirebaseAuth.getInstance()
+        val user = firebaseAuth.currentUser
+
+        // Set user info
+        binding.tvUserName.text = user?.displayName ?: "No Name"
+        binding.tvUserEmail.text = user?.email ?: "No Email"
+
+        // Show loading indicator
+        binding.phoneProgressBar.visibility = View.VISIBLE
+        binding.tvUserPhone.text = "Loading..."
+
+        user?.uid?.let { uid ->
+            val db = FirebaseFirestore.getInstance()
+            db.collection("users").document(uid).get()
+                .addOnSuccessListener { document ->
+                    val phone = document.getString("phone") ?: "No Phone"
+                    binding.tvUserPhone.text = phone
+                    binding.phoneProgressBar.visibility = View.GONE
+                }
+                .addOnFailureListener {
+                    binding.tvUserPhone.text = "No Phone"
+                    binding.phoneProgressBar.visibility = View.GONE
+                }
+        } ?: run {
+            binding.tvUserPhone.text = "No Phone"
+            binding.phoneProgressBar.visibility = View.GONE
+        }
+
+        binding.btnAccountSettings.setOnClickListener {
+            // TODO: Navigate to Account Settings screen
+        }
 
         binding.btnLogout.setOnClickListener {
             firebaseAuth.signOut()
-
-            // Navigate to LoginActivity or MainActivity
             val intent = Intent(requireContext(), LoginActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)

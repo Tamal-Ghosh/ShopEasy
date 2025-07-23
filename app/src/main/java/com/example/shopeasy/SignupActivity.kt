@@ -7,6 +7,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.shopeasy.databinding.ActivitySignupBinding
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.UserProfileChangeRequest
+import com.google.firebase.firestore.FirebaseFirestore
 
 class SignupActivity : AppCompatActivity() {
 
@@ -80,9 +82,34 @@ class SignupActivity : AppCompatActivity() {
             fauth.createUserWithEmailAndPassword(emailText, passwordText)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        Toast.makeText(this, "Registration successful", Toast.LENGTH_SHORT).show()
-                        startActivity(Intent(this, MainActivity::class.java))
-                        finish()
+                        val user = fauth.currentUser
+                        val profileUpdates = UserProfileChangeRequest.Builder()
+                            .setDisplayName(name)
+                            .build()
+                        user?.updateProfile(profileUpdates)?.addOnCompleteListener { updateTask ->
+                            if (updateTask.isSuccessful) {
+                                // Save user data to Firestore
+                                val db = FirebaseFirestore.getInstance()
+                                val userId = user.uid
+                                val userMap = hashMapOf(
+                                    "name" to name,
+                                    "email" to emailText,
+                                    "phone" to phone
+                                )
+                                db.collection("users").document(userId)
+                                    .set(userMap)
+                                    .addOnSuccessListener {
+                                        Toast.makeText(this, "Registration successful", Toast.LENGTH_SHORT).show()
+                                        startActivity(Intent(this, MainActivity::class.java))
+                                        finish()
+                                    }
+                                    .addOnFailureListener {
+                                        Toast.makeText(this, "Failed to save user data", Toast.LENGTH_SHORT).show()
+                                    }
+                            } else {
+                                Toast.makeText(this, "Failed to set display name", Toast.LENGTH_SHORT).show()
+                            }
+                        }
                     } else {
                         Toast.makeText(this, "Signup failed: ${task.exception?.message}", Toast.LENGTH_LONG).show()
                     }

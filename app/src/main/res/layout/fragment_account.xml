@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:gravity="center"
     android:padding="24dp"
+    android:fitsSystemWindows="true"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.profile.AccountFragment">
+    android:background="@color/bg_color"
+    android:layout_height="match_parent">
 
     <TextView
         android:id="@+id/accountWelcomeText"
@@ -15,12 +15,54 @@
         android:text="Welcome to your account"
         android:textSize="18sp"
         android:textStyle="bold"
-        android:paddingBottom="24dp" />
+        android:paddingBottom="24dp"
+        android:textColor="@color/white"/>
+
+    <TextView
+        android:id="@+id/tvUserName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="User Name"
+        android:textSize="16sp"
+        android:paddingBottom="8dp"
+        android:textColor="@color/white"/>
+
+    <TextView
+        android:id="@+id/tvUserEmail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="user@email.com"
+        android:textSize="16sp"
+        android:paddingBottom="24dp"
+        android:textColor="@color/white"/>
+
+    <TextView
+        android:id="@+id/tvUserPhone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Phone Number"
+        android:textSize="16sp"
+        android:paddingBottom="24dp"
+        android:textColor="@color/white"/>
+
+    <Button
+        android:id="@+id/btnAccountSettings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Account Settings"
+        android:layout_marginBottom="16dp" />
 
     <Button
         android:id="@+id/btnLogout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Logout" />
+
+    <ProgressBar
+        android:id="@+id/phoneProgressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_gravity="center_horizontal"/>
 
 </LinearLayout>

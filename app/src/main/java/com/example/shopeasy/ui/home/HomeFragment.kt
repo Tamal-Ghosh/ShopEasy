@@ -46,22 +46,22 @@ class HomeFragment : Fragment() {
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
         // Button to add 10 sample products
-        binding.addSampleProductsButton.setOnClickListener {
-            val sampleProducts = List(10) { i ->
-                Product(
-                    id = i + 1,
-                    name = "Product ${i + 1}",
-                    price = (100..500).random().toDouble(),
-                    description = "Description for product ${i + 1}",
-                    imageUrl = ""
-                )
-            }
-            sampleProducts.forEach { product ->
-                viewLifecycleOwner.lifecycleScope.launch {
-                    productViewModel.addProduct(product) { }
-                }
-            }
-        }
+//        binding.addSampleProductsButton.setOnClickListener {
+//            val sampleProducts = List(10) { i ->
+//                Product(
+//                    id = i + 1,
+//                    name = "Product ${i + 1}",
+//                    price = (100..500).random().toDouble(),
+//                    description = "Description for product ${i + 1}",
+//                    imageUrl = ""
+//                )
+//            }
+//            sampleProducts.forEach { product ->
+//                viewLifecycleOwner.lifecycleScope.launch {
+//                    productViewModel.addProduct(product) { }
+//                }
+//            }
+//        }
 
         productViewModel.productsLive.observe(viewLifecycleOwner) { productEntities ->
             val products = productEntities.map {
