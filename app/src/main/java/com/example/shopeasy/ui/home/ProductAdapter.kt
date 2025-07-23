@@ -15,7 +15,7 @@ class ProductAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(product: Product) {
-            binding.productName.text = product.name
+            binding.productName.text = "${product.name} (${product.id})"
             binding.productPrice.text = "৳${product.price}"
             // Uncomment and use Glide/Coil if you have image URLs:
             // Glide.with(binding.productImage.context).load(product.imageUrl).into(binding.productImage)

@@ -1,31 +1,36 @@
 package com.example.shopeasy.viewmodel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.*
+import com.example.shopeasy.data.repository.ProductRepository
 import com.example.shopeasy.model.Product
+import com.example.shopeasy.data.model.local.ProductEntity
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
+class ProductViewModel(application: Application) : AndroidViewModel(application) {
 
-class ProductViewModel : ViewModel() {
+    private val repository = ProductRepository(application.applicationContext)
 
-    // Backing property for encapsulation
-    private val _products = MutableLiveData<List<Product>>()
+    // LiveData from Room database (local cache)
+    val productsLive: LiveData<List<ProductEntity>> = repository.getProductsLive()
 
-    // Public LiveData to observe
-    val products: LiveData<List<Product>>
-        get() = _products
-
+    // Optionally, trigger Firestore sync on init
     init {
-        loadMockProducts()
+        viewModelScope.launch {
+            repository.refreshProductsFromFirestore()
+        }
     }
 
-    private fun loadMockProducts() {
-        // create a list of mock Product objects
-        val mockList = listOf(
-            Product(1, "Product 1", 10.0, "Description 1", "https://via.placeholder.com/150"),
-            Product(2, "Product 2", 20.0, "Description 2", "https://via.placeholder.com/150")
-            // Add more mock products here
-        )
-        _products.value = mockList
+    fun addProduct(product: Product, onComplete: (Boolean) -> Unit) {
+        viewModelScope.launch {
+            val result = repository.addProduct(product)
+            onComplete(result)
+            // Optionally, refresh local cache after adding
+            repository.refreshProductsFromFirestore()
+        }
+    }
+    suspend fun refreshProducts() {
+        repository.refreshProductsFromFirestore()
     }
 }

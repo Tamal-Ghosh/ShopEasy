@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.google.gms.google.services)
     id ("kotlin-parcelize")
+    id("kotlin-kapt")
 }
 
 android {
@@ -42,22 +43,37 @@ android {
 
 dependencies {
 
+    // Firebase BoM to manage all Firebase versions consistently
+    implementation(platform("com.google.firebase:firebase-bom:32.7.4"))
+
+    // Firebase libraries – no version needed
+    implementation("com.google.firebase:firebase-auth-ktx")
+    implementation("com.google.firebase:firebase-firestore-ktx")
+
+    // Core Android dependencies
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
-    implementation(libs.firebase.auth)
+
+    // Optional: Google Sign-in if used
     implementation(libs.androidx.credentials)
     implementation(libs.androidx.credentials.play.services.auth)
     implementation(libs.googleid)
+
+    // Lifecycle and ViewModel
+    implementation("androidx.fragment:fragment-ktx:1.5.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1")
+
+    // Room Database
+    implementation("androidx.room:room-runtime:2.6.1")
+    kapt("androidx.room:room-compiler:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
+
+    // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-
-    implementation ("androidx.fragment:fragment-ktx:1.5.0")  // or latest
-    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1" ) // or latest
-
-
-
 }
+

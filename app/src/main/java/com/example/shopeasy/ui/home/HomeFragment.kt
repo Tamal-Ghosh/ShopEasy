@@ -1,24 +1,31 @@
 package com.example.shopeasy.ui.home
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.shopeasy.databinding.FragmentHomeBinding
 import com.example.shopeasy.model.Product
 import com.example.shopeasy.ui.detail.ProductDetailFragment
+import com.example.shopeasy.viewmodel.ProductViewModel
+import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
+    private val productViewModel by viewModels<ProductViewModel>()
     private lateinit var productAdapter: ProductAdapter
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
@@ -28,23 +35,52 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val dummyProducts = listOf(
-            Product(1, "Item 1", 100.0, "Description 1", "image_url_1"),
-            Product(2, "Item 2", 200.0, "Description 2", "image_url_2"),
-            // Add more products if you want
-        )
-
-        productAdapter = ProductAdapter(dummyProducts) { clickedProduct ->
-            // Replace with ProductDetailFragment and pass the product
+        productAdapter = ProductAdapter(emptyList()) { clickedProduct ->
             val detailFragment = ProductDetailFragment.newInstance(clickedProduct)
             parentFragmentManager.beginTransaction()
-                .replace(id, detailFragment)  // 'id' is container ID of HomeFragment
-                .addToBackStack(null)         // Add to back stack to allow back navigation
+                .replace(id, detailFragment)
+                .addToBackStack(null)
                 .commit()
         }
-
         binding.recyclerView.adapter = productAdapter
-        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext()) // or GridLayoutManager
+        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
+
+        // Button to add 10 sample products
+        binding.addSampleProductsButton.setOnClickListener {
+            val sampleProducts = List(10) { i ->
+                Product(
+                    id = i + 1,
+                    name = "Product ${i + 1}",
+                    price = (100..500).random().toDouble(),
+                    description = "Description for product ${i + 1}",
+                    imageUrl = ""
+                )
+            }
+            sampleProducts.forEach { product ->
+                viewLifecycleOwner.lifecycleScope.launch {
+                    productViewModel.addProduct(product) { }
+                }
+            }
+        }
+
+        productViewModel.productsLive.observe(viewLifecycleOwner) { productEntities ->
+            val products = productEntities.map {
+                Log.d("HomeFragmentId", "Product ID: ${it.id} - Name: ${it.name}")
+                Product(
+
+                    id = it.id.toInt()?: 0,
+                    name = it.name,
+                    price = it.price,
+                    description = it.description,
+                    imageUrl = it.imageUrl
+                )
+            }
+            productAdapter.submitList(products)
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            productViewModel.refreshProducts()
+        }
     }
 
     override fun onDestroyView() {

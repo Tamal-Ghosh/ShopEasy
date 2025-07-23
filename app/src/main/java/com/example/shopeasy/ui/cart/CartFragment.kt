@@ -16,9 +16,7 @@ class CartFragment : Fragment() {
     private var _binding: FragmentCartBinding? = null
     private val binding get() = _binding!!
 
-    // Use activityViewModels() if shared between fragments/activities
     private val cartViewModel: CartViewModel by activityViewModels()
-
     private lateinit var cartAdapter: CartAdapter
 
     override fun onCreateView(
@@ -32,23 +30,23 @@ class CartFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        cartAdapter = CartAdapter(emptyList()) { productToRemove ->
-            cartViewModel.removeFromCart(productToRemove)
-            Toast.makeText(requireContext(), "${productToRemove.name} removed.", Toast.LENGTH_SHORT).show()
-        }
+        cartAdapter = CartAdapter(
+            emptyList(),
+            onRemoveClick = { productToRemove ->
+                cartViewModel.removeFromCart(productToRemove)
+                Toast.makeText(requireContext(), "${productToRemove.name} removed.", Toast.LENGTH_SHORT).show()
+            },
+            onQuantityChange = { productId, increase ->
+                cartViewModel.changeQuantity(productId, increase)
+                // Optionally update total price here if needed
+            }
+        )
 
         binding.cartRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.cartRecyclerView.adapter = cartAdapter
 
-        // Observe cart items and update UI
         cartViewModel.cartItems.observe(viewLifecycleOwner) { products ->
-            cartAdapter = CartAdapter(products) { productToRemove ->
-                cartViewModel.removeFromCart(productToRemove)
-                Toast.makeText(requireContext(), "${productToRemove.name} removed.", Toast.LENGTH_SHORT).show()
-            }
-            binding.cartRecyclerView.adapter = cartAdapter
-
-            // Update total price
+            cartAdapter.updateData(products)
             val total = cartViewModel.getTotalPrice()
             binding.totalPriceTextView.text = "Total: ৳$total"
         }
