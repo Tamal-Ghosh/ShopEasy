@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -39,8 +40,11 @@ class HomeFragment : Fragment() {
 
         // Adjust status bar icon color based on light/dark theme
         val window = requireActivity().window
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        val insetsController = WindowInsetsControllerCompat(window, window.decorView)
         val isDarkTheme = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
-        WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = false
+        insetsController.isAppearanceLightStatusBars = !isDarkTheme // dark icons for light theme
+
 
         // RecyclerView setup
         productAdapter = ProductAdapter(emptyList()) { clickedProduct ->

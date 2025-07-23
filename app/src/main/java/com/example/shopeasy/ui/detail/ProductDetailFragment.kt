@@ -36,8 +36,10 @@ class ProductDetailFragment : Fragment() {
 
         // Fix for transparent status bar overlap + correct icon color
         val window = requireActivity().window
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        val insetsController = WindowInsetsControllerCompat(window, window.decorView)
         val isDarkTheme = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
-        WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = false
+        insetsController.isAppearanceLightStatusBars = !isDarkTheme // dark icons for light theme
 
         val product = arguments?.getParcelable<Product>("product")
 
