@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scrollView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="24dp"
+    android:background="@color/bg_color"
+    android:fitsSystemWindows="true">
+
+    <LinearLayout
+        android:layout_marginTop="100dp"
+        android:id="@+id/otpLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
+
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="OTP Verification"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:layout_marginBottom="24dp" />
+
+        <TextView
+            android:id="@+id/tvEmail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="user@example.com"
+            android:textSize="16sp"
+            android:textColor="@android:color/white"
+            android:layout_marginBottom="16dp" />
+
+        <!-- OTP Box Row -->
+        <LinearLayout
+            android:id="@+id/otpBoxContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <!-- 6 OTP Boxes -->
+            <EditText
+                android:id="@+id/etDigit1"
+                style="@style/OtpBoxStyle"
+                android:textColor="@android:color/black"
+                android:layout_marginEnd="6dp"/>
+
+            <EditText
+                android:id="@+id/etDigit2"
+                style="@style/OtpBoxStyle"
+                android:textColor="@android:color/black"
+                android:layout_marginEnd="6dp"/>
+
+            <EditText
+                android:id="@+id/etDigit3"
+                style="@style/OtpBoxStyle"
+                android:textColor="@android:color/black"
+                android:layout_marginEnd="6dp"/>
+
+            <EditText
+                android:id="@+id/etDigit4"
+                style="@style/OtpBoxStyle"
+                android:textColor="@android:color/black"
+                android:layout_marginEnd="6dp"/>
+
+            <EditText
+                android:id="@+id/etDigit5"
+                style="@style/OtpBoxStyle"
+                android:textColor="@android:color/black"
+                android:layout_marginEnd="6dp"/>
+
+            <EditText
+                android:id="@+id/etDigit6"
+                style="@style/OtpBoxStyle"
+                android:textColor="@android:color/black"/>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnConfirmOtp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Confirm OTP"
+            android:textColor="@android:color/white"
+            android:layout_marginTop="24dp" />
+
+        <Button
+            android:id="@+id/btnResendOtp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Resend OTP"
+            android:textColor="@android:color/white"
+            android:enabled="false"
+            android:layout_marginTop="16dp" />
+
+        <TextView
+            android:id="@+id/tvCountdown"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textSize="14sp"
+            android:textColor="@android:color/white"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:id="@+id/tvOtpDisplay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="OTP: 000000"
+            android:textSize="16sp"
+            android:textColor="@android:color/white"
+            android:layout_marginBottom="16dp" />
+
+
+    </LinearLayout>
+</ScrollView>

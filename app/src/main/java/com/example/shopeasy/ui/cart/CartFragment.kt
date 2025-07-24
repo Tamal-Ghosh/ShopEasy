@@ -11,7 +11,10 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.shopeasy.R
 import com.example.shopeasy.databinding.FragmentCartBinding
+import com.example.shopeasy.ui.payment.AmountEntryFragment
+import com.example.shopeasy.ui.payment.PaymentMethodFragment
 import com.example.shopeasy.viewmodel.CartViewModel
 
 class CartFragment : Fragment() {
@@ -62,9 +65,18 @@ class CartFragment : Fragment() {
         }
 
         binding.checkoutButton.setOnClickListener {
-            Toast.makeText(requireContext(), "Checkout clicked", Toast.LENGTH_SHORT).show()
-            // TODO: Implement checkout logic
+            val total = cartViewModel.getTotalPrice()
+            val paymentMethodFragment = PaymentMethodFragment().apply {
+                arguments = Bundle().apply {
+                    putDouble("cart_total", total)
+                }
+            }
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragmentContainer, paymentMethodFragment)
+                .addToBackStack(null)
+                .commit()
         }
+
     }
 
     override fun onDestroyView() {
