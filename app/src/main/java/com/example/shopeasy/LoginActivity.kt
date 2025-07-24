@@ -5,11 +5,8 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import androidx.core.view.updatePadding
 import com.example.shopeasy.databinding.ActivityLoginBinding
 import com.google.firebase.auth.FirebaseAuth
 
@@ -24,8 +21,8 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
-            val window = window
+        // Status bar appearance for light/dark theme
+        val window = window
         WindowCompat.setDecorFitsSystemWindows(window, false)
         val insetsController = WindowInsetsControllerCompat(window, window.decorView)
         val isDarkTheme = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
@@ -55,12 +52,25 @@ class LoginActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
+            // Sign in with Firebase Authentication
             fauth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this) { task ->
                     if (task.isSuccessful) {
-                        Toast.makeText(this, "Login successful.", Toast.LENGTH_SHORT).show()
-                        startActivity(Intent(this, MainActivity::class.java))
-                        finish()
+                        val user = fauth.currentUser
+                        // Check if email is verified
+                        if (user != null && user.isEmailVerified) {
+                            Toast.makeText(this, "Login successful.", Toast.LENGTH_SHORT).show()
+                            startActivity(Intent(this, MainActivity::class.java))
+                            finish()
+                        } else {
+                            // Email not verified
+                            Toast.makeText(
+                                this,
+                                "Please verify your email before logging in.",
+                                Toast.LENGTH_LONG
+                            ).show()
+                            fauth.signOut()
+                        }
                     } else {
                         Toast.makeText(
                             this,

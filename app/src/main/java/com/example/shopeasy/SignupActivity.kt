@@ -23,9 +23,7 @@ class SignupActivity : AppCompatActivity() {
         binding = ActivitySignupBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
-
-
+        // Status bar appearance for light/dark theme
         val window = window
         WindowCompat.setDecorFitsSystemWindows(window, false)
         val insetsController = WindowInsetsControllerCompat(window, window.decorView)
@@ -54,47 +52,44 @@ class SignupActivity : AppCompatActivity() {
             val passwordText = binding.password.text.toString().trim()
             val phone = binding.phoneNumber.text.toString().trim()
 
+            // Input validation
             if (name.isEmpty()) {
                 binding.fullName.error = "Full name is required"
                 binding.fullName.requestFocus()
                 return@setOnClickListener
             }
-
             if (emailText.isEmpty()) {
                 binding.email.error = "Email is required"
                 binding.email.requestFocus()
                 return@setOnClickListener
             }
-
             if (!Patterns.EMAIL_ADDRESS.matcher(emailText).matches()) {
                 binding.email.error = "Enter a valid email"
                 binding.email.requestFocus()
                 return@setOnClickListener
             }
-
             if (passwordText.isEmpty()) {
                 binding.password.error = "Password is required"
                 binding.password.requestFocus()
                 return@setOnClickListener
             }
-
             if (passwordText.length < 6) {
                 binding.password.error = "Password must be at least 6 characters"
                 binding.password.requestFocus()
                 return@setOnClickListener
             }
-
             if (phone.isEmpty()) {
                 binding.phoneNumber.error = "Phone number is required"
                 binding.phoneNumber.requestFocus()
                 return@setOnClickListener
             }
 
-            // Firebase Authentication
+            // Create user with Firebase Authentication
             fauth.createUserWithEmailAndPassword(emailText, passwordText)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         val user = fauth.currentUser
+                        // Set display name
                         val profileUpdates = UserProfileChangeRequest.Builder()
                             .setDisplayName(name)
                             .build()
@@ -111,9 +106,26 @@ class SignupActivity : AppCompatActivity() {
                                 db.collection("users").document(userId)
                                     .set(userMap)
                                     .addOnSuccessListener {
-                                        Toast.makeText(this, "Registration successful", Toast.LENGTH_SHORT).show()
-                                        startActivity(Intent(this, MainActivity::class.java))
-                                        finish()
+                                        // Send verification email
+                                        user.sendEmailVerification().addOnCompleteListener { verifyTask ->
+                                            if (verifyTask.isSuccessful) {
+                                                Toast.makeText(
+                                                    this,
+                                                    "Verification email sent. Please check your inbox.",
+                                                    Toast.LENGTH_LONG
+                                                ).show()
+                                                // Sign out and redirect to login
+                                                fauth.signOut()
+                                                startActivity(Intent(this, LoginActivity::class.java))
+                                                finish()
+                                            } else {
+                                                Toast.makeText(
+                                                    this,
+                                                    "Failed to send verification email.",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                            }
+                                        }
                                     }
                                     .addOnFailureListener {
                                         Toast.makeText(this, "Failed to save user data", Toast.LENGTH_SHORT).show()
