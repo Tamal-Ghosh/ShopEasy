@@ -1,11 +1,13 @@
 package com.example.shopeasy.ui.home
 
+
 import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.SearchView
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.Fragment
@@ -22,6 +24,7 @@ class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
+    private val allProducts = mutableListOf<Product>() // Placeholder, will be updated by ViewModel
 
     private val productViewModel by viewModels<ProductViewModel>()
     private lateinit var productAdapter: ProductAdapter
@@ -60,6 +63,18 @@ class HomeFragment : Fragment() {
             layoutManager = LinearLayoutManager(requireContext())
         }
 
+        val searchView = binding.searchView
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean = true
+            override fun onQueryTextChange(newText: String?): Boolean {
+                val filtered = allProducts.filter {
+                    it.name.contains(newText.orEmpty(), ignoreCase = true)
+                }
+                productAdapter.submitList(filtered)
+                return true
+            }
+        })
+
         // Observe products from ViewModel
         productViewModel.productsLive.observe(viewLifecycleOwner) { productEntities ->
             val products = productEntities.map {
@@ -72,6 +87,8 @@ class HomeFragment : Fragment() {
                     imageUrl = it.imageUrl
                 )
             }
+            allProducts.clear()
+            allProducts.addAll(products)
             productAdapter.submitList(products)
         }
 
@@ -79,6 +96,19 @@ class HomeFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             productViewModel.refreshProducts()
         }
+
+
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean = true
+            override fun onQueryTextChange(newText: String?): Boolean {
+                val filtered = allProducts.filter {
+                    it.name.contains(newText.orEmpty(), ignoreCase = true)
+                }
+                productAdapter.submitList(filtered)
+                binding.noMatchesText.visibility = if (filtered.isEmpty()) View.VISIBLE else View.GONE
+                return true
+            }
+        })
     }
 
     override fun onDestroyView() {
