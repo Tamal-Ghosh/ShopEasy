@@ -66,6 +66,10 @@ class AccountFragment : Fragment() {
             binding.phoneProgressBar.visibility = View.GONE
         }
 
+        binding.btnChangePassword.setOnClickListener {
+            navigateToChangePassword()
+        }
+
         binding.btnAccountSettings.setOnClickListener {
             // TODO: Navigate to Account Settings screen
         }
@@ -76,6 +80,14 @@ class AccountFragment : Fragment() {
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
         }
+    }
+
+    private fun navigateToChangePassword() {
+        val changePasswordFragment = ChangePasswordFragment()
+        parentFragmentManager.beginTransaction()
+            .replace(id, changePasswordFragment)
+            .addToBackStack(null)
+            .commit()
     }
 
     override fun onDestroyView() {
